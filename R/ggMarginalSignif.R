@@ -46,29 +46,31 @@ ggMarginalSignif <- function(
     ggplot2::theme(
       legend.position = "bottom"
     )
-  built_main <- ggplot2::ggplot_build(main_plot)
-  x_breaks <- built_main$layout$panel_params[[1]]$x$breaks
-  x_breaks <- x_breaks[is.finite(x_breaks)]
-  x_limits <- range(
-    built_main$layout$panel_params[[1]]$x$range$range,
-    na.rm = TRUE
-    )
 
-  y_breaks <- built_main$layout$panel_params[[1]]$y$breaks
+  built_main <- ggplot2::ggplot_build(main_plot)
+
+  x_breaks <- built_main$layout$panel_scales_x[[1]]$get_breaks()
+  x_breaks <- x_breaks[is.finite(x_breaks)]
+  x_limits <- built_main$layout$panel_scales_x[[1]]$get_limits()
+
+  y_breaks <- built_main$layout$panel_scales_y[[1]]$get_breaks()
   y_breaks <- y_breaks[is.finite(y_breaks)]
-  y_limits <- range(
-    built_main$layout$panel_params[[1]]$y$range$range,
-    na.rm = TRUE
-)
+  y_limits <- built_main$layout$panel_scales_y[[1]]$get_limits()
+
   top_plot <- ggplot2::ggplot(
     data,
-    ggplot2::scale_y_continuous(
-        limits = x_limits,
-        breaks = x_breaks
-    ) +
-    ggplot2::aes(x = !!group_var, y = !!x_var, fill = !!group_var, color = !!group_var)
+    ggplot2::aes(
+      x = !!group_var,
+      y = !!x_var,
+      fill = !!group_var,
+      color = !!group_var
+    )
   ) +
     ggplot2::geom_violin(alpha = 0.5, trim = FALSE) +
+    ggplot2::scale_y_continuous(
+      limits = x_limits,
+      breaks = x_breaks
+    ) +
     ggplot2::theme_classic() +
     ggplot2::theme(
       axis.title.x = ggplot2::element_blank(),
@@ -91,15 +93,20 @@ ggMarginalSignif <- function(
 
   right_plot <- ggplot2::ggplot(
     data,
-    ggplot2::aes(x = !!group_var, y = !!y_var, fill = !!group_var, color = !!group_var)
+    ggplot2::aes(
+      x = !!group_var,
+      y = !!y_var,
+      fill = !!group_var,
+      color = !!group_var
+    )
   ) +
     ggplot2::geom_violin(alpha = 0.5, trim = FALSE) +
+    ggplot2::scale_y_continuous(
+      limits = y_limits,
+      breaks = y_breaks
+    ) +
     ggplot2::coord_flip() +
     ggplot2::theme_classic() +
-    ggplot2::scale_y_continuous(
-        limits = y_limits,
-        breaks = y_breaks
-    ) +
     ggplot2::theme(
       axis.title.x = ggplot2::element_blank(),
       axis.title.y = ggplot2::element_blank(),
