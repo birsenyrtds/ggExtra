@@ -67,16 +67,18 @@ MarginalPlot <- R6::R6Class("MarginalPlot",
     },
 
     getGeomPointDf = function() {
-      layerBool <- vapply(
-        self$scatPbuilt$plot$layers,
-        function(x) grepl("geom_?point", class(x$geom)[1], ignore.case = TRUE),
-        logical(1)
-      )
-      if (!any(layerBool)) {
-        stop("No geom_point layer was found in your scatter plot", call. = FALSE)
-      }
-      self$scatPbuilt[["data"]][layerBool][[1]]
-    },
+  layerBool <- vapply(
+    self$scatPbuilt$plot$layers,
+    function(x) grepl("geom_?point", class(x$geom)[1], ignore.case = TRUE),
+    logical(1)
+  )
+
+  if (!any(layerBool)) {
+    stop("This ggMarginal version still requires a geom_point layer.", call. = FALSE)
+  }
+
+  self$scatPbuilt[["data"]][layerBool][[1]]
+},
 
     margPlotNoGeom = function(data) {
       mapping <- "x"

@@ -103,12 +103,70 @@
 #'
 #' @seealso \href{https://daattali.com/shiny/ggExtra-ggMarginal-demo/}{Demo Shiny app}
 #' @export
-ggMarginal <- function(p, data, x, y,
-                       type = c("density", "histogram",  "boxplot", "violin",
-                                "densigram"),
-                       margins = c("both", "x", "y"), size = 5,
-                       ..., xparams = list(), yparams = list(),
-                       groupColour = FALSE, groupFill = FALSE) {
+ggMarginal <- function(
+  p = NULL,
+  data = NULL,
+  x = NULL,
+  y = NULL,
+  type = c("density", "histogram", "boxplot", "violin", "densigram"),
+  margins = c("both", "x", "y"),
+  size = 5,
+  ...,
+  xparams = list(),
+  yparams = list(),
+  groupColour = FALSE,
+  groupFill = FALSE,
+  signif_comparisons = NULL,
+  signif_annotations = NULL,
+  signif_y_position = NULL,
+  signif_xmin = NULL,
+  signif_xmax = NULL,
+  signif_tip_length = 0.02
+) {
+
+  if (!is.null(signif_comparisons)) {
+    p <- p +
+      ggsignif::geom_signif(
+        comparisons = signif_comparisons,
+        annotations = signif_annotations,
+        y_position = signif_y_position,
+        tip_length = signif_tip_length
+      )
+  }
+
+  if (!is.null(signif_xmin) && !is.null(signif_xmax)) {
+    p <- p +
+      ggplot2::annotate(
+        "segment",
+        x = signif_xmin,
+        xend = signif_xmax,
+        y = signif_y_position,
+        yend = signif_y_position
+      ) +
+      ggplot2::annotate(
+        "segment",
+        x = signif_xmin,
+        xend = signif_xmin,
+        y = signif_y_position,
+        yend = signif_y_position - signif_tip_length
+      ) +
+      ggplot2::annotate(
+        "segment",
+        x = signif_xmax,
+        xend = signif_xmax,
+        y = signif_y_position,
+        yend = signif_y_position - signif_tip_length
+      ) +
+      ggplot2::annotate(
+        "text",
+        x = (signif_xmin + signif_xmax) / 2,
+        y = signif_y_position + signif_tip_length,
+        label = signif_annotations
+      )
+}
+
+  # buradan sonra ggMarginal'ın mevcut kendi kodu devam edecek
+
 
   # Figure out all the default parameters.
   type <- match.arg(type)

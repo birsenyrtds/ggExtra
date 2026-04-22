@@ -5,10 +5,10 @@
 \title{Add marginal density/histogram to ggplot2 scatterplots}
 \usage{
 ggMarginal(
-  p,
-  data,
-  x,
-  y,
+  p = NULL,
+  data = NULL,
+  x = NULL,
+  y = NULL,
   type = c("density", "histogram", "boxplot", "violin", "densigram"),
   margins = c("both", "x", "y"),
   size = 5,
@@ -16,7 +16,13 @@ ggMarginal(
   xparams = list(),
   yparams = list(),
   groupColour = FALSE,
-  groupFill = FALSE
+  groupFill = FALSE,
+  signif_comparisons = NULL,
+  signif_annotations = NULL,
+  signif_y_position = NULL,
+  signif_xmin = NULL,
+  signif_xmax = NULL,
+  signif_tip_length = 0.02
 )
 }
 \arguments{

@@ -3,6 +3,7 @@
 S3method(print,ggExtraPlot)
 export(ggMarginal)
 export(ggMarginalGadget)
+export(ggMarginalSignif)
 export(plotCount)
 export(removeGrid)
 export(removeGridX)
