@@ -20,10 +20,7 @@
 #' @return A patchwork plot.
 #' @export
 ggMarginalSignif <- function(
-  data,
-  x,
-  y,
-  group,
+  data, x, y, group,
   point_alpha = 0.6,
   point_size = 2,
   top_comparisons = NULL,
@@ -57,6 +54,13 @@ ggMarginalSignif <- function(
   y_breaks <- y_breaks[is.finite(y_breaks)]
   y_limits <- built_main$layout$panel_scales_y[[1]]$get_limits()
 
+  top_upper <- max(c(y_limits, top_y_position), na.rm = TRUE)
+  right_upper <- max(c(x_limits, right_y_position), na.rm = TRUE)
+
+  top_limits <- c(y_limits[1], top_upper)
+  right_limits <- c(x_limits[1], right_upper)
+
+  # Top violin: y ekseni main scatter'ın y ekseni ile aynı olsun
   top_plot <- ggplot2::ggplot(
     data,
     ggplot2::aes(
@@ -68,7 +72,6 @@ ggMarginalSignif <- function(
   ) +
     ggplot2::geom_violin(alpha = 0.5, trim = FALSE) +
     ggplot2::scale_y_continuous(
-      limits = x_limits,
       breaks = x_breaks
     ) +
     ggplot2::theme_classic() +
@@ -77,20 +80,23 @@ ggMarginalSignif <- function(
       axis.title.y = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_blank(),
       axis.ticks.x = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_text(),
+      axis.ticks.y = ggplot2::element_line(),
       legend.position = "none"
     )
+    
 
   if (!is.null(top_comparisons)) {
-    top_plot <- top_plot +
-      ggsignif::geom_signif(
-        comparisons = top_comparisons,
-        annotations = top_annotations,
-        y_position = top_y_position,
-        step_increase = 0.12,
-        tip_length = 0.02
-      )
+    top_plot <- top_plot + ggsignif::geom_signif(
+      comparisons = top_comparisons,
+      annotations = top_annotations,
+      y_position = top_y_position,
+      step_increase = 0.12,
+      tip_length = 0.02
+    )
   }
 
+  # Right violin: coord_flip sonrası x ekseni main scatter'ın x ekseni ile aynı olsun
   right_plot <- ggplot2::ggplot(
     data,
     ggplot2::aes(
@@ -102,7 +108,6 @@ ggMarginalSignif <- function(
   ) +
     ggplot2::geom_violin(alpha = 0.5, trim = FALSE) +
     ggplot2::scale_y_continuous(
-      limits = y_limits,
       breaks = y_breaks
     ) +
     ggplot2::coord_flip() +
@@ -110,27 +115,26 @@ ggMarginalSignif <- function(
     ggplot2::theme(
       axis.title.x = ggplot2::element_blank(),
       axis.title.y = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_text(),
+      axis.ticks.x = ggplot2::element_line(),
       axis.text.y = ggplot2::element_blank(),
       axis.ticks.y = ggplot2::element_blank(),
       legend.position = "none"
     )
 
   if (!is.null(right_comparisons)) {
-    right_plot <- right_plot +
-      ggsignif::geom_signif(
-        comparisons = right_comparisons,
-        annotations = right_annotations,
-        y_position = right_y_position,
-        step_increase = 0.12,
-        tip_length = 0.02
-      )
+    right_plot <- right_plot + ggsignif::geom_signif(
+      comparisons = right_comparisons,
+      annotations = right_annotations,
+      y_position = right_y_position,
+      step_increase = 0.12,
+      tip_length = 0.02
+    )
   }
 
   spacer <- patchwork::plot_spacer()
 
-  final_plot <-
-    (top_plot | spacer) /
-    (main_plot | right_plot) +
+  final_plot <- (right_plot | spacer) / (main_plot | top_plot) +
     patchwork::plot_layout(
       widths = c(4, 1.8),
       heights = c(1.8, 4)
