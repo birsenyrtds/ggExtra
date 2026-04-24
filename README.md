@@ -8,6 +8,47 @@ version](https://www.r-pkg.org/badges/version/ggExtra)](https://cran.r-project.o
 > the MIT license.*
 
 `ggExtra` is a collection of functions and layers to enhance ggplot2.
+## New feature: ggMarginalSignif()
+
+This development branch introduces a helper function `ggMarginalSignif()` that enables adding statistical significance annotations to marginal violin plots created alongside a scatter plot.
+
+The function extends the behaviour of `ggMarginal()` by supporting:
+
+- grouped marginal violin plots
+- pairwise comparisons using ggsignif
+- custom annotation labels
+- independent positioning of annotations
+- annotations on both top and right marginal panels
+
+### Example
+
+```r
+library(ggplot2)
+library(ggsignif)
+library(patchwork)
+
+devtools::load_all("~/ggExtra")
+
+data(mpg, package = "ggplot2")
+
+ggMarginalSignif(
+  data = mpg,
+  x = displ,
+  y = hwy,
+  group = class,
+  top_comparisons = list(
+    c("compact", "suv"),
+    c("midsize", "pickup")
+  ),
+  top_annotations = c("p < 0.001", "p = 0.01"),
+  top_y_position = c(7.2, 7.8),
+  right_comparisons = list(
+    c("compact", "suv"),
+    c("midsize", "pickup")
+  ),
+  right_annotations = c("p < 0.001", "p = 0.02"),
+  right_y_position = c(42, 45)
+)
 The flagship function is `ggMarginal`, which can be used to add marginal
 histograms/boxplots/density plots to ggplot2 scatterplots. You can view
 a [live interactive
