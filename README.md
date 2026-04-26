@@ -290,3 +290,40 @@ When adding new `ggMarginal()` tests (in [`tests/testthat/helper-funs.R`](tests/
 Now the new snapshots will be created in your computer and you can review them to make sure they look correct. If you're happy with them, you can commit them to GitHub, and any further tests will use these images as the expectation.
 
 On GitHub, the visual tests are run against a few {ggplot2} versions that are defined in [the GitHub Action workflow](.github/workflows/test-ggplot2-versions.yml).
+## New feature: ggMarginalSignif()
+
+`ggMarginalSignif()` extends `ggMarginal()` by adding marginal violin plots with statistical significance annotations using `ggsignif`.
+
+It keeps the scatter plot in the center and adds:
+
+- a top marginal violin aligned with the y-axis
+- a right marginal violin aligned with the x-axis
+- optional pairwise comparison annotations (p-values)
+
+Example:
+
+```r
+library(ggplot2)
+library(ggExtra)
+
+data(mpg, package = "ggplot2")
+
+ggMarginalSignif(
+  data = mpg,
+  x = displ,
+  y = hwy,
+  group = class,
+  top_comparisons = list(
+    c("2seater", "suv"),
+    c("pickup", "suv")
+  ),
+  top_y_position = c(43, 36),
+  right_comparisons = list(
+    c("2seater", "suv"),
+    c("compact", "suv")
+  ),
+  right_y_position = c(7.2, 6.4)
+)
+```
+
+![](man/figures/ggMarginalSignif-example.png)
