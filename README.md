@@ -60,7 +60,7 @@ ggMarginalSignif(
 )
 ```
 
-![](man:figures/ggMarginalSignif-example.png)
+![](man/figures%3AggMarginalSignif-example.png)
 
 
 ## Installation
